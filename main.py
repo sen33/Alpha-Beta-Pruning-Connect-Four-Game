@@ -1,5 +1,6 @@
 import random
 import os
+import math
 
 def printBoard (gameBoard,enable) :
     if(enable):
@@ -10,6 +11,13 @@ def printBoard (gameBoard,enable) :
             if (j != 7):
                 print('   ', end = '')
         print()
+
+def copyBoard(board):
+    new_board = []
+    for i in range(6):
+        temp = board[i].copy()
+        new_board.append(temp)
+    return new_board
 
 def updateBoard (playerNumber, position, gameBoard):
     for i in range(6):
@@ -199,7 +207,7 @@ win = False
 while (not win):
     updateBoard(PLAYER, inputStep(gameBoard), gameBoard)
     # updateBoard(AI, randomizeMove(gameBoard), gameBoard)
-    updateBoard(AI, minimaxAlphaBetaPruning(gameBoard, 4, -999999, 999999, AI)[1], gameBoard)
+    updateBoard(AI, minimaxAlphaBetaPruning(gameBoard, 5, -999999, 999999, AI)[1], gameBoard)
     printBoard(gameBoard,clear_screen)
     if(checkWin(gameBoard,PLAYER) or checkWin(gameBoard,AI)):
         win = True
