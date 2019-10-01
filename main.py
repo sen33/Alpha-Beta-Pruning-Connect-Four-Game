@@ -43,7 +43,7 @@ class gameEngine():
         return randomBotMove
 
     def checkEndCondition (gameBoard):
-        return gameEngine.checkFullBoard(gameBoard) # or checkWinOrLose(gameBoard)
+        return gameEngine.checkFullBoard(gameBoard) or gameEngine.checkWin(gameBoard,gameEngine.PLAYER) or gameEngine.checkWin(gameBoard,gameEngine.AI)
 
     def checkFullBoard (gameBoard):
         for i in range(7):
