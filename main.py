@@ -50,7 +50,7 @@ def minimaxAlphaBetaPruning(gameBoard, depth, alpha, beta, playerNumber):
     print(legalMoves)
     move = randomizeMove(gameBoard)
     if depth == 0 or checkEndCondition(gameBoard):
-        return utility(gameboard), None
+        return utility(gameboard), move
     if playerNumber == 2:
         value = -999999
         for move in legalMoves:
