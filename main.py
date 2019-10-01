@@ -22,9 +22,10 @@ class gameEngine():
 
     def updateBoard (playerNumber, position, gameBoard):
         for i in range(6):
-            if(gameBoard[5-i][position] == 0):
-                gameBoard[5-i][position] = playerNumber
-                break
+            if(position != None):
+                if(gameBoard[5-i][position] == 0):
+                    gameBoard[5-i][position] = playerNumber
+                    break
 
     def inputStep (gameBoard):
         step = int(input('Masukkan kolom langkah anda selanjutnya: ')) - 1
@@ -162,6 +163,7 @@ class gameEngine():
                 if(score<value):
                     value = score
                     res_move = move
+                beta = min(beta,value)
                 if alpha >= beta:
                     break
             return [value, res_move]
