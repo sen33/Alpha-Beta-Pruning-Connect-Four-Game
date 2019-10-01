@@ -42,33 +42,120 @@ def checkFullBoard (gameBoard):
             return False
     return True
 
+def evaluate(block, piece):
+    score = 0
+
+    opponent = PLAYER
+    if(piece == PLAYER):
+        opponent = AI
+    
+    if block.count(piece) == 4:
+        score += 100   
+    elif block.count(piece) == 3 and block.count(0) == 1:
+        score += 10
+    elif block.count(piece) == 2 and block.count(0) == 2:
+        score += 5
+    if block.count(opponent) == 3 and block.count(0) == 1:
+        score -= 8
+
+    return score
+
+def utility(gameBoard, piece):
+    score = 0
+    
+    #Horizontal scoring
+    for r in range(6):
+        #fetch a row into arr
+        row_arr = []
+        for i in range(7):
+            row_arr.append(gameBoard[r][i])
+
+        #divade the arr into 4 column block
+        for c in range(4):
+            block = row_arr[c:c+4]
+            score += evaluate(block, piece)
+
+    #Vertical scoring
+    for c in range(7):
+        col_arr = []
+        for i in range(6):
+            col_arr.append(gameBoard[i][c])
+
+        for r in range(3):
+            block = col_arr[r:r+4]
+            score += evaluate(block, piece)
+
+
+    #Positive slope scoring
+    for r in range(3):
+        for c in range(4):
+            block = []
+            for i in range(4):
+                block.append(gameBoard[r+i][c+i])
+                score += evaluate(block, piece)
+
+    #Negative slope scoring
+    for r in range(3):
+        for c in range(3,6):
+            block = []
+            for i in range(4):
+                block.append(gameBoard[r+3-i][c-i])
+                score += evaluate(block, piece)
+
+    return score
+
+def validMoveSearch(gameBoard):
+    valid_moves = []
+    for c in range(7):
+        for r in range(6):
+            if (gameBoard[r][c] == 0):
+                valid_moves.append(c)
+                break
+    return valid_moves
+
 def minimaxAlphaBetaPruning(gameBoard, depth, alpha, beta, playerNumber):
-    legalMoves = []
-    for i in range(7):
-        if (gameBoard[0][i] == 0):
-            legalMoves.append(i)
-    print(legalMoves)
-    move = randomizeMove(gameBoard)
+    
+    legalMoves = validMoveSearch(gameBoard)
+
     if depth == 0 or checkEndCondition(gameBoard):
-        return utility(gameboard), move
-    if playerNumber == 2:
-        value = -999999
+        if (checkWin(gameBoard, PLAYER)):
+            return [-999999, None]
+        elif (checkWin(gameBoard, AI)):
+            return [999999, None]
+        elif (checkFullBoard(gameBoard)):
+            return [0, None]
+        else: # depth == 0
+            return [utility(gameBoard, AI), None]
+            
+
+    if (playerNumber == 2):
+        value = -math.inf
+        res_move = random.choice(legalMoves)
         for move in legalMoves:
-            value = max(value, minimaxAlphaBetaPruning(gameBoard, depth - 1, alpha, beta, 1)[0])
+            board = copyBoard(gameBoard)
+            updateBoard(2, move, board)
+            score = minimaxAlphaBetaPruning(board, depth - 1, alpha, beta, 1)[0]
+            if(score>value):
+                value = score
+                res_move = move
             alpha = max(alpha, value)
             if alpha >= beta:
                 break
-        print(value, move)
-        return value, move
+        return [value, res_move]
+
     else: # playerNumber == 1
-        value = 999999
+        value = math.inf
+        res_move = random.choice(legalMoves)
         for move in legalMoves:
-            value = min(value, minimaxAlphaBetaPruning(gameBoard, depth - 1, alpha, beta, 2)[0])
-            beta = min(beta, value)
+            board = copyBoard(gameBoard)
+            updateBoard(1, move, board)
+            score = minimaxAlphaBetaPruning(board, depth - 1, alpha, beta, 2)[0]
+            if(score<value):
+                value = score
+                res_move = move
             if alpha >= beta:
                 break
-        print(value, move)
-        return value, move
+        return [value, res_move]
 
 def checkWin(gameBoard,piece):
     #Check horizontal condition
@@ -91,7 +178,6 @@ def checkWin(gameBoard,piece):
         for r in range(3,6):
             if(gameBoard[r][c] == gameBoard[r-1][c+1] == gameBoard[r-2][c+2] == gameBoard[r-3][c+3] == piece):
                 return True
-
 
 
 PLAYER = 1
