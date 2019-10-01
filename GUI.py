@@ -1,7 +1,7 @@
 import pygame, sys
 from pygame.locals import *
+from main import gameEngine
 
-pygame.init()
 def makeBoard(screen, gameBoard):
     for i in range(6):
         for j in range(7):
@@ -12,6 +12,15 @@ def makeBoard(screen, gameBoard):
             elif (gameBoard[i][j] == 2):
                 pygame.draw.circle(screen,RED,(j * COLUMN_SIZE + COLUMN_SIZE//2, i * COLUMN_SIZE + COLUMN_SIZE//2), COLUMN_SIZE//2 - 5)
 
+def putPiece(gameBoard, input, category):
+    if (not isInputNotValid(input, gameBoard)):
+        gameEngine.updateBoard(PLAYER, input, gameBoard)
+        if (category == 1):
+            gameEngine.updateBoard(AI, gameEngine.randomizeMove(gameBoard), gameBoard)
+        elif (category == 2):
+            gameEngine.updateBoard(AI, gameEngine.minimaxAlphaBetaPruning(gameBoard, 5, -999999, 999999, AI)[1], gameBoard)
+        if(gameEngine.checkWin(gameBoard,PLAYER) or gameEngine.checkWin(gameBoard,AI)):
+            print('WIIIN')
 
 def makeBackground(screen, gameBoard):
     screen.fill(BLUE)
@@ -71,8 +80,12 @@ def makeBackground(screen, gameBoard):
     textRect = text.get_rect()  
     textRect.center = (800, 550) 
     screen.blit(text, textRect)
-
+def isInputNotValid (input, gameBoard):
+    return input < 0 or input > 6 or gameBoard[0][input] != 0
+    
 #Constant
+PLAYER = 1
+AI = 2
 COLUMN_SIZE = 100
 WHITE=(255,255,255)
 RED = (255,0,0)
@@ -80,42 +93,43 @@ YELLOW = (255,255,0)
 BLUE=(0,0,255)
 BLACK  = (0,0,0)
 #screen Initializer
-gameBoard = [[0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,2,0],
-            [0,0,0,0,0,2,0],
-            [0,0,0,0,0,1,1],
-            [0,0,0,0,0,1,2],]
-screen=pygame.display.set_mode((9 * COLUMN_SIZE,6 * COLUMN_SIZE),0,32)
+category = 2
+pygame.init()
+gameBoard = [[0 for col in range(7)] for row in range(6)]
+screen = pygame.display.set_mode((9 * COLUMN_SIZE,6 * COLUMN_SIZE),0,32)
 makeBackground(screen, gameBoard)
 
 while True:
     for event in pygame.event.get():
         if event.type == MOUSEBUTTONDOWN:
             position = pygame.mouse.get_pos()
-            if position[0] <= 95 and position[0] >=5:
-                print('Input Col 1')
-            elif position[0] <= 195 and position[0] >=105:
-                print('Input Col 2')
-            elif position[0] <= 295 and position[0] >=205:
-                print('Input Col 3')
-            elif position[0] <= 395 and position[0] >=305:
-                print('Input Col 4')
-            elif position[0] <= 495 and position[0] >=405:
-                print('Input Col 5')
-            elif position[0] <= 595 and position[0] >=505:
-                print('Input Col 6')
-            elif position[0] <= 695 and position[0] >=605:
-                print('Input Col 7')
-            else: # Menu bar
+            if position[0] >=5 and position[0]<=695:
+                if position[0] <= 95 and position[0] >=5:
+                    putPiece(gameBoard, 0, category)
+                elif position[0] <= 195 and position[0] >=105:
+                    putPiece(gameBoard, 1, category)
+                elif position[0] <= 295 and position[0] >=205:
+                    putPiece(gameBoard, 2, category)
+                elif position[0] <= 395 and position[0] >=305:
+                    putPiece(gameBoard, 3, category)
+                elif position[0] <= 495 and position[0] >=405:
+                    putPiece(gameBoard, 4, category)
+                elif position[0] <= 595 and position[0] >=505:
+                    putPiece(gameBoard, 5, category)
+                elif position[0] <= 695 and position[0] >=605:
+                    putPiece(gameBoard, 6, category)
+            elif position[0] <= 875 and position[0] >=725: # Menu bar
                 if position[1] >= 25 and position[1] <= 75:
-                    print('New Game')
+                    gameBoard = [[0 for col in range(7)] for row in range(6)]
                 if position[1] >= 125 and position[1] <= 175:
-                    print('Category 1')
+                    category = 1
+                    gameBoard = [[0 for col in range(7)] for row in range(6)]
                 if position[1] >= 200 and position[1] <= 250:
-                    print('Category 2')
+                    category = 2
+                    gameBoard = [[0 for col in range(7)] for row in range(6)]
                 if position[1] >= 275 and position[1] <= 325:
-                    print('Category 3')
+                    category = 3
+                    gameBoard = [[0 for col in range(7)] for row in range(6)]
                 if position[1] >= 375 and position[1] <= 425:
                     print('Difficulty 1')
                 if position[1] >= 450 and position[1] <= 500:
