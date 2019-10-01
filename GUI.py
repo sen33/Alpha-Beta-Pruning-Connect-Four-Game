@@ -12,6 +12,18 @@ def makeBoard(screen, gameBoard):
             elif (gameBoard[i][j] == 2):
                 pygame.draw.circle(screen,RED,(j * COLUMN_SIZE + COLUMN_SIZE//2, i * COLUMN_SIZE + COLUMN_SIZE//2), COLUMN_SIZE//2 - 5)
 
+def botMatch(screen, gameBoard):
+    win = False
+    while not win:
+        gameEngine.updateBoard(PLAYER, gameEngine.randomizeMove(gameBoard), gameBoard)
+        makeBoard(screen, gameBoard)
+        pygame.display.update()
+        gameEngine.updateBoard(AI, gameEngine.minimaxAlphaBetaPruning(gameBoard, 3, -999999, 999999, AI)[1], gameBoard)
+        makeBoard(screen, gameBoard)
+        pygame.display.update()
+        if(gameEngine.checkWin(gameBoard,PLAYER) or gameEngine.checkWin(gameBoard,AI)):
+            win = True
+
 def putPiece(gameBoard, input, category):
     if (not isInputNotValid(input, gameBoard)):
         gameEngine.updateBoard(PLAYER, input, gameBoard)
@@ -130,6 +142,7 @@ while True:
                 if position[1] >= 275 and position[1] <= 325:
                     category = 3
                     gameBoard = [[0 for col in range(7)] for row in range(6)]
+                    botMatch(screen, gameBoard)
                 if position[1] >= 375 and position[1] <= 425:
                     print('Difficulty 1')
                 if position[1] >= 450 and position[1] <= 500:
