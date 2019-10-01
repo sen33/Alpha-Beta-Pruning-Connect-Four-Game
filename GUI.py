@@ -9,7 +9,7 @@ def makeBoard(screen, gameBoard):
                 pygame.draw.circle(screen,BLACK,(j * COLUMN_SIZE + COLUMN_SIZE//2, i * COLUMN_SIZE + COLUMN_SIZE//2), COLUMN_SIZE//2 - 5)
             elif (gameBoard[i][j] == 1):
                 pygame.draw.circle(screen,YELLOW,(j * COLUMN_SIZE + COLUMN_SIZE//2, i * COLUMN_SIZE + COLUMN_SIZE//2), COLUMN_SIZE//2 - 5)
-            elif (gameBoard[i][j] == 1):
+            elif (gameBoard[i][j] == 2):
                 pygame.draw.circle(screen,RED,(j * COLUMN_SIZE + COLUMN_SIZE//2, i * COLUMN_SIZE + COLUMN_SIZE//2), COLUMN_SIZE//2 - 5)
 
 
@@ -82,10 +82,10 @@ BLACK  = (0,0,0)
 #screen Initializer
 gameBoard = [[0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0],]
+            [0,0,0,0,0,2,0],
+            [0,0,0,0,0,2,0],
+            [0,0,0,0,0,1,1],
+            [0,0,0,0,0,1,2],]
 screen=pygame.display.set_mode((9 * COLUMN_SIZE,6 * COLUMN_SIZE),0,32)
 makeBackground(screen, gameBoard)
 
