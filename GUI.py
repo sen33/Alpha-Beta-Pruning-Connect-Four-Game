@@ -12,6 +12,18 @@ def makeBoard(screen, gameBoard):
             elif (gameBoard[i][j] == 2):
                 pygame.draw.circle(screen,RED,(j * COLUMN_SIZE + COLUMN_SIZE//2, i * COLUMN_SIZE + COLUMN_SIZE//2), COLUMN_SIZE//2 - 5)
 
+def botMatch(screen, gameBoard):
+    win = False
+    while not win:
+        gameEngine.updateBoard(PLAYER, gameEngine.randomizeMove(gameBoard), gameBoard)
+        makeBoard(screen, gameBoard)
+        pygame.display.update()
+        gameEngine.updateBoard(AI, gameEngine.minimaxAlphaBetaPruning(gameBoard, 3, -999999, 999999, AI)[1], gameBoard)
+        makeBoard(screen, gameBoard)
+        pygame.display.update()
+        if(gameEngine.checkWin(gameBoard,PLAYER) or gameEngine.checkWin(gameBoard,AI)):
+            win = True
+
 def putPiece(gameBoard, input, category):
     if (not isInputNotValid(input, gameBoard)):
         gameEngine.updateBoard(PLAYER, input, gameBoard)
@@ -86,12 +98,18 @@ def popup(screen,gameBoard,cond):
     if(cond != 0):
         if(cond == PLAYER):
             displayed_text = "Yellow Win."
+            bg_color = YELLOW
+            text_color = BLACK
         elif(cond == AI):
             displayed_text = "Red Win."
+            bg_color = RED
+            text_color = BLACK
         elif(cond == DRAW):
             displayed_text = "Draw."
-        pygame.draw.rect(screen,YELLOW,(720,25,160,50))
-        text = menuFont.render(displayed_text, True, BLACK, YELLOW)
+            bg_color = (255,165,0)
+            text_color = WHITE
+        pygame.draw.rect(screen,bg_color,(720,25,160,50))
+        text = menuFont.render(displayed_text, True, text_color, bg_color)
         textRect = text.get_rect()  
         textRect.center = (800, 50) 
         screen.blit(text, textRect)
@@ -169,6 +187,7 @@ while True:
                     gameBoard = [[0 for col in range(7)] for row in range(6)]
                     WIN = False
                     WIN_SIDE = 0
+                    botMatch(screen, gameBoard)
                 if position[1] >= 375 and position[1] <= 425:
                     print('Difficulty 1')
                     gameBoard = [[0 for col in range(7)] for row in range(6)]
